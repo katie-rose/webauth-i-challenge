@@ -12,7 +12,7 @@ server.get("/", (req, res) => {
   res.send("It's working. IT'S WORKING!");
 });
 
-server.use("/api/auth/", authRouter);
+server.use("/api/auth", authRouter);
 server.use("/api/users", userRouter);
 
 module.exports = server;

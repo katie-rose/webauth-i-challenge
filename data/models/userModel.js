@@ -11,10 +11,8 @@ async function find() {
   return await db("users").select("id", "username", "password");
 }
 
-async function findBy(filter) {
-  return await db("users")
-    .where(filter)
-    .first();
+function findBy(filter) {
+  return db("users").where(filter);
 }
 
 async function add(user) {
