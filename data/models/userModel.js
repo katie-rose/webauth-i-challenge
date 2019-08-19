@@ -12,7 +12,9 @@ async function find() {
 }
 
 async function findBy(filter) {
-  return await db("users").where(filter);
+  return await db("users")
+    .where(filter)
+    .first();
 }
 
 async function add(user) {
