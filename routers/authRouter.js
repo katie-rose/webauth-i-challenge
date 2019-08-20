@@ -16,23 +16,31 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-  console.log("username: ", username);
-  console.log("password: ", password);
+router.post("/login", (req, res) => {
+  let { username, password } = req.body;
 
-  try {
-    const user = await Users.findBy({ username });
-    console.log("user: ", user);
+  Users.findBy({ username })
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(password, user.password)) {
+        req.session.username = user.username;
+        req.session.loggedIn = true;
+        res.status(200).json({
+          message: `Welcome ${user.username}!`
+        });
+      } else {
+        res.status(401).json({ message: "Invalid Credentials" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json(error);
+    });
+});
 
-    if (user && bcrypt.compareSync(password, user.password)) {
-      res.status(200).json({ message: `Welcome ${user.username}!` });
-    } else {
-      res.status(401).json({ message: "Invalid Credentials" });
-    }
-  } catch (err) {
-    res.status(500).json(err.message);
-  }
+router.get("/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.status(200).json({ bye: "felicia" });
+  });
 });
 
 module.exports = router;
